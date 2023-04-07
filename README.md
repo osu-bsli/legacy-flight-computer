@@ -17,7 +17,7 @@ Please self-assign tasks (put your name next to them) and check them off when do
 
 - [ ] change packet types [before 2023-04-12]
   - [ ] determing packet types -- dersu
-  - [ ] packet.h
+  - [ ] packet.h -- dersu
   - [ ] packet.c
   - [ ] test_packet.h + test_packet.c
   - [ ] everywhere else
