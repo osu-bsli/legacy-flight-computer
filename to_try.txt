@@ -1,0 +1,5 @@
+to try software i2c, add to /boot/config.txt:
+ probably dont need with bitbangio
+should check anyway
+
+dtoverlay=i2c-gpio,bus=6,i2c_gpio_sda=2,i2c_gpio_scl=3,i2c_gpio_delay_us=2
