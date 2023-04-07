@@ -16,7 +16,9 @@ This a modified version of the original flight computer code from our 2022 compe
 Please self-assign tasks (put your name next to them) and check them off when done. Feel free to add/remove/modify tasks. This list is incomplete because none of us can predict *everything* that needs to be done. Neither do we know all the details of how to do each task - you will need to do research. If you have questions or need help, *it's always better to ask then to be silent*. If you don't know what to do, just pick something. If you don't have a lot of time, at least try to look at the code and understand some of it, or look through the documentation for some of the libraries, or read up on UART, etc. There's always something to do.
 
 - [ ] change packet types [before 2023-04-12]
-  - [ ] packet.h + packet.c
+  - [ ] determing packet types -- dersu
+  - [ ] packet.h
+  - [ ] packet.c
   - [ ] test_packet.h + test_packet.c
   - [ ] everywhere else
   - [ ] python wrapper
