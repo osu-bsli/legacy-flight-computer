@@ -24,7 +24,7 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [ ] python wrapper
 - [ ] figure out communication with sensers [before 2023-04-12]
   - [ ] i2c
-  - [ ] can
+  - [ ] can -- peter
   - [ ] reading/writing
   - [ ] initialization
     - [ ] constants/registers
