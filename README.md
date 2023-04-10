@@ -65,7 +65,7 @@ Outbound data (to ground) is all in 1 packet. The format is, in order:
    1. status (1)
    2. current (4)
    3. voltage (4)
-8.  stratologger:
+8. stratologger:
    1.  status (1)
    2.  current (4)
    3.  voltage (4)
