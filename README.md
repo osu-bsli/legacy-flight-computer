@@ -104,8 +104,8 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] inbound
     - [x] outbound
     - [ ] functionalities
-  - [ ] packet.h -- dersu
-  - [ ] packet.c -- dersu
+  - [x] packet.h -- dersu
+  - [x] packet.c -- dersu
   - [ ] parser.h
   - [ ] parser.c
   - [ ] test_packet.h + test_packet.c
