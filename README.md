@@ -40,6 +40,7 @@ Inbound packet types:
 | 12   | start logging data to log file   | no     |
 | 13   | stop logging data to log file    | no     |
 | 99   | killswitch (sudo halt)           | no     |
+
 Packets marked as not in use will not be used this year (2023).
 
 Inbound CAN message types:
@@ -52,7 +53,7 @@ Inbound CAN message types:
 | `ARMING_BAT_DATA`   | current (2), voltage (2)                                                                |
 
 Outbound data (to ground) is all in 1 packet. Items marked as unused will not be used for this year (2023). The format is, in order:
-1. header:
+1. header: (unused)
    1. `CRC_SYNC` (4)
    2. `CFC_ID` (2)
 2. high g x/y/z:
