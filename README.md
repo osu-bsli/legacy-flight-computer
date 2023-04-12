@@ -99,7 +99,7 @@ Please self-assign tasks (put your name next to them) and check them off when do
 
 - [ ] change packet types [before 2023-04-12]
   - [ ] determing packet types -- dersu
-    - [ ] inbound
+    - [x] inbound
     - [x] outbound
     - [ ] functionalities
   - [ ] packet.h -- dersu
