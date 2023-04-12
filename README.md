@@ -18,16 +18,31 @@ AFAIK, here's how it works:
 2. check for 4-byte starting delimiter (3735928559 = `0xDEADBEEF`)
 3. determine packet type (next 2 bytes after delimiter)
 4. if the packet is for arming/disarming:
-   1. send corresponding CAN message
-   2. set corresponding GPIO to high
+   1. if arming by CAN is enabled, send corresponding CAN message
+   2. otherwise, set corresponding GPIO to high
    3. `time.sleep(0.1)`
    4. set corresponding GPIO to low
 5. fetch data from peripherals
 6. do some math
 7. send data to ground as one big packet
 
+Inbound packet types:
+| type | description                      |
+|------|----------------------------------|
+| 1    | arm telemetrum                   |
+| 2    | arm stratologger                 |
+| 3    | arm camera                       |
+| 4    | disarm telemetrum                |
+| 5    | dissarm stratologger             |
+| 6    | disarm camera                    |
+| 10   | set ground level for launch      |
+| 11   | set ground level to 0 (a reset?) |
+| 12   | start logging data to log file   |
+| 13   | stop logging data to log file    |
+| 99   | killswitch (sudo halt)           |
+
 Inbound CAN message types:
-| type                | data (bytes)                                                 |
+| type                | data (bytes)                                                                            |
 |---------------------|-----------------------------------------------------------------------------------------|
 | `PWR_BRD_BAT_DATA`  | main battery voltage (4), main battery current (4)                                      |
 | `PWR_BRD_RAIL_DATA` | 3v rail voltage (2), 5v rail voltage (2), main battery voltage (2), ADC temperature (2) |
