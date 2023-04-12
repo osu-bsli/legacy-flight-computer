@@ -103,7 +103,9 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] outbound
     - [ ] functionalities
   - [ ] packet.h -- dersu
-  - [ ] packet.c
+  - [ ] packet.c -- dersu
+  - [ ] parser.h
+  - [ ] parser.c
   - [ ] test_packet.h + test_packet.c
   - [ ] everywhere else
   - [ ] python wrapper
