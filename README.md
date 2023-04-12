@@ -27,19 +27,20 @@ AFAIK, here's how it works:
 7. send data to ground as one big packet
 
 Inbound packet types:
-| type | description                      |
-|------|----------------------------------|
-| 1    | arm telemetrum                   |
-| 2    | arm stratologger                 |
-| 3    | arm camera                       |
-| 4    | disarm telemetrum                |
-| 5    | dissarm stratologger             |
-| 6    | disarm camera                    |
-| 10   | set ground level for launch      |
-| 11   | set ground level to 0 (a reset?) |
-| 12   | start logging data to log file   |
-| 13   | stop logging data to log file    |
-| 99   | killswitch (sudo halt)           |
+| type | description                      | in use |
+|------|----------------------------------|--------|
+| 1    | arm telemetrum                   | yes    |
+| 2    | arm stratologger                 | yes    |
+| 3    | arm camera                       | yes    |
+| 4    | disarm telemetrum                | yes    |
+| 5    | dissarm stratologger             | yes    |
+| 6    | disarm camera                    | yes    |
+| 10   | set ground level for launch      | yes    |
+| 11   | set ground level to 0 (a reset?) | yes    |
+| 12   | start logging data to log file   | no     |
+| 13   | stop logging data to log file    | no     |
+| 99   | killswitch (sudo halt)           | no     |
+Packets marked as not in use will not be used this year (2023).
 
 Inbound CAN message types:
 | type                | data (bytes)                                                                            |
@@ -50,7 +51,7 @@ Inbound CAN message types:
 | `DISARM_DEVICE_ACK` | none                                                                                    |
 | `ARMING_BAT_DATA`   | current (2), voltage (2)                                                                |
 
-Outbound data (to ground) is all in 1 packet. The format is, in order:
+Outbound data (to ground) is all in 1 packet. Items marked as unused will not be used for this year (2023). The format is, in order:
 1. header:
    1. `CRC_SYNC` (4)
    2. `CFC_ID` (2)
@@ -58,7 +59,7 @@ Outbound data (to ground) is all in 1 packet. The format is, in order:
    1. x (4)
    2. y (4)
    3. z (4)
-3. magnetometer:
+3. magnetometer: (unused)
    1. x (4)
    2. y (4)
    3. z (4)
@@ -88,8 +89,8 @@ Outbound data (to ground) is all in 1 packet. The format is, in order:
     1.  status (1)
     2.  current (4)
     3.  voltage (4)
-10. 3v rail voltage (4)
-11. 5v rail voltage (4)
+10. 3v rail voltage (4) (unused)
+11. 5v rail voltage (4) (unused)
 12. main battery voltage (4)
 13. main battery temp (4)
 Total packet size is 114 bytes.
