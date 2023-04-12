@@ -110,6 +110,7 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [ ] test_packet.h + test_packet.c
   - [ ] everywhere else
   - [ ] python wrapper
+- [ ] modify ground control software to work with new packet types
 - [ ] figure out communication with sensers [before 2023-04-12]
   - [ ] i2c -- ayden
   - [ ] can -- peter
