@@ -88,9 +88,9 @@ Outbound data (to ground) is all in 1 packet. Items marked as unused will not be
    2. current (4)
    3. voltage (4)
 11. stratologger:
-   1.  status (1)
-   2.  current (4)
-   3.  voltage (4)
+    1.  status (1)
+    2.  current (4)
+    3.  voltage (4)
 12. camera:
     1.  status (1)
     2.  current (4)
@@ -113,11 +113,11 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] packet.c -- dersu
   - [x] parser.h -- ram
   - [x] parser.c -- toby
-  - [ ] test_packet.h + test_packet.c -- ram
-     - [x] Update tests
+  - [ ] test_packet.h + test_packet.c
+     - [x] Update tests -- ram
      - [ ] Verify tests
-  - [ ] test_parser.h + test_parser.c -- toby
-     - [x] Update tests
+  - [ ] test_parser.h + test_parser.c
+     - [x] Update tests -- toby
      - [ ] Verify tests
   - [ ] everywhere else
   - [ ] make sure it can compile
