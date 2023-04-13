@@ -111,9 +111,10 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [ ] functionalities
   - [x] packet.h -- dersu
   - [x] packet.c -- dersu
-  - [ ] parser.h
-  - [ ] parser.c
+  - [x] parser.h
+  - [x] parser.c
   - [ ] test_packet.h + test_packet.c
+  - [ ] test_parser.h + test_parser.c
   - [ ] everywhere else
   - [ ] python wrapper -- dersu
 - [ ] modify ground control software to work with new packet types
