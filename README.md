@@ -77,16 +77,16 @@ Outbound data (to ground) is all in 1 packet. Items marked as unused will not be
 8. barometer:
    1. altitude (4)
 9.  gps:
-   1. altitude (4)
-   2. satellite count (1)
-   3. latitude (4)
-   4. longitude (4)
-   5. ascent (4)
-   6. ground speed (4)
+    1. altitude (4)
+    2. satellite count (1)
+    3. latitude (4)
+    4. longitude (4)
+    5. ascent (4)
+    6. ground speed (4)
 10. telemetrum:
-   1. status (1)
-   2. current (4)
-   3. voltage (4)
+    1. status (1)
+    2. current (4)
+    3. voltage (4)
 11. stratologger:
     1.  status (1)
     2.  current (4)
