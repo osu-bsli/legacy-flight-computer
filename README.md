@@ -72,28 +72,33 @@ Outbound data (to ground) is all in 1 packet. Items marked as unused will not be
    1. x (4)
    2. y (4)
    3. z (4)
-6. gps:
-   1. satellite count (1)
-   2. latitude (4)
-   3. longitude (4)
-   4. ascent (4)
-   5. ground speed (4)
-7. telemetrum:
+6. cpu temp (4) (unused)
+7. real temp (4) (unused)
+8. barometer:
+   1. altitude (4)
+9.  gps:
+   1. altitude (4)
+   2. satellite count (1)
+   3. latitude (4)
+   4. longitude (4)
+   5. ascent (4)
+   6. ground speed (4)
+10. telemetrum:
    1. status (1)
    2. current (4)
    3. voltage (4)
-8. stratologger:
+11. stratologger:
    1.  status (1)
    2.  current (4)
    3.  voltage (4)
-9.  camera:
+12. camera:
     1.  status (1)
     2.  current (4)
     3.  voltage (4)
-10. 3v rail voltage (4) (unused)
-11. 5v rail voltage (4) (unused)
-12. main battery voltage (4)
-13. main battery temp (4)
+13. 3v rail voltage (4) (unused)
+14. 5v rail voltage (4) (unused)
+15. main battery voltage (4)
+16. main battery temp (4)
 Total packet size is 114 bytes.
 
 ## TODO
