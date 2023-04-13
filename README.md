@@ -114,7 +114,11 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] parser.h
   - [x] parser.c
   - [ ] test_packet.h + test_packet.c
+     - [x] Update tests
+     - [ ] Verify tests
   - [ ] test_parser.h + test_parser.c
+     - [x] Update tests
+     - [ ] Verify tests
   - [ ] everywhere else
   - [ ] make sure it can compile
   - [x] python wrapper -- dersu
