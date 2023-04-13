@@ -109,12 +109,16 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] inbound
     - [x] outbound
     - [x] functionalities
-  - [x] packet.h
-  - [x] packet.c
-  - [x] parser.h
-  - [x] parser.c
-  - [ ] test_packet.h + test_packet.c
-  - [x] test_parser.h + test_parser.c
+  - [x] packet.h -- dersu
+  - [x] packet.c -- dersu
+  - [x] parser.h -- ram
+  - [x] parser.c -- toby
+  - [ ] test_packet.h + test_packet.c -- ram
+     - [x] Update tests
+     - [ ] Verify tests
+  - [ ] test_parser.h + test_parser.c -- toby
+     - [x] Update tests
+     - [ ] Verify tests
   - [ ] everywhere else
   - [ ] make sure it can compile
   - [x] python wrapper
