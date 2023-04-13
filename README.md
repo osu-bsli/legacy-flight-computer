@@ -77,20 +77,20 @@ Outbound data (to ground) is all in 1 packet. Items marked as unused will not be
 8. barometer:
    1. altitude (4)
 9.  gps:
-   1. altitude (4)
-   2. satellite count (1)
-   3. latitude (4)
-   4. longitude (4)
-   5. ascent (4)
-   6. ground speed (4)
+    1. altitude (4)
+    2. satellite count (1)
+    3. latitude (4)
+    4. longitude (4)
+    5. ascent (4)
+    6. ground speed (4)
 10. telemetrum:
-   1. status (1)
-   2. current (4)
-   3. voltage (4)
+    1. status (1)
+    2. current (4)
+    3. voltage (4)
 11. stratologger:
-   1.  status (1)
-   2.  current (4)
-   3.  voltage (4)
+    1.  status (1)
+    2.  current (4)
+    3.  voltage (4)
 12. camera:
     1.  status (1)
     2.  current (4)
@@ -105,22 +105,26 @@ Total packet size is 114 bytes.
 Please self-assign tasks (put your name next to them) and check them off when done. Feel free to add/remove/modify tasks. This list is incomplete because none of us can predict *everything* that needs to be done. Neither do we know all the details of how to do each task - you will need to do research. If you have questions or need help, *it's always better to ask then to be silent*. If you don't know what to do, just pick something. If you don't have a lot of time, at least try to look at the code and understand some of it, or look through the documentation for some of the libraries, or read up on UART, etc. There's always something to do.
 
 - [ ] change packet types [before 2023-04-12]
-  - [x] determing packet types -- dersu
+  - [x] determing packet types
     - [x] inbound
     - [x] outbound
     - [x] functionalities
   - [x] packet.h -- dersu
   - [x] packet.c -- dersu
-  - [x] parser.h
-  - [x] parser.c
+  - [x] parser.h -- ram
+  - [x] parser.c -- toby
   - [ ] test_packet.h + test_packet.c
+     - [x] Update tests -- ram
+     - [ ] Verify tests
   - [ ] test_parser.h + test_parser.c
+     - [x] Update tests -- toby
+     - [ ] Verify tests
   - [ ] everywhere else
   - [ ] make sure it can compile
-  - [x] python wrapper -- dersu
+  - [x] python wrapper
   - [ ] creating packets -- deklin
     - [ ] adapt code from ground control
-- [ ] modify ground control software to work with new packet types
+- [ ] modify ground control software to work with new packet types -- toby
 - [ ] figure out communication with sensers [before 2023-04-12]
   - [ ] i2c -- ayden
   - [ ] can -- peter
