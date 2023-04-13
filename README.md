@@ -124,7 +124,7 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] python wrapper
   - [ ] creating packets -- deklin
     - [ ] adapt code from ground control
-- [ ] modify ground control software to work with new packet types
+- [ ] modify ground control software to work with new packet types -- toby
 - [ ] figure out communication with sensers [before 2023-04-12]
   - [ ] i2c -- ayden
   - [ ] can -- peter
