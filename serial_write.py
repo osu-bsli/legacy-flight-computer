@@ -390,12 +390,18 @@ while 1:
     ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (bmx_data[6], bmx_data[7], bmx_data[8])))
     ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (baro_alt - baro_ground_level)))
     ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (((gps_alt - gps_ground_level) * 3.281),gps_satCount, gps_lat, gps_lon, gps_ascent, gps_groundSpeed)))
-    # Need to find data to enter, current tuple is a placeholder
-    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (status, current, voltage)))
-    # Need to find data to enter, current tuple is a placeholder
-    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (status, current, voltage)))
-    # Need to find data to enter, current tuple is a placeholder
-    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (status, current, voltage)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (
+        telemetrum_board.arm_status,
+        telemetrum_board.current,
+        telemetrum_board.voltage)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (
+        stratologger_board.arm_status,
+        stratologger_board.current,
+        stratologger_board.voltage)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
+        camera_board.arm_status,
+        camera_board.current,
+        camera_board.voltage)))
     ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (mainBatteryVoltage, mainBatteryTemperature)))
 
     if logging_data:
