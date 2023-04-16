@@ -8,7 +8,10 @@ sys.path.append('../../')
 sys.path.append('/')
 # Need in case we run not as pi user
 sys.path.append('/home/pi/.local/lib/python3.9/site-packages/')
+
+# assume import works :eyes:
 import packet_util
+
 import os
 import time
 import serial
@@ -269,6 +272,25 @@ disarm_camera_msg = CAN.CAN_message(
     dest_addr=CAMERA, type=DISARM_DEVICE)
 """ End code for CAN things """
 
+
+
+# Start data logging 
+num = 0
+log_file = f'/home/pi/flight_data_{num}.data'
+while os.path.exists(log_file):
+	num = num + 1
+	log_file = f'/home/pi/flight_data_{num}.data'
+log_file_stream = open(log_file, 'wb')
+log_start_time = time.time()
+
+
+# Stop data logging at the end
+# Command to stop data logging
+# logging_data = False
+# log_file_stream.flush()
+# log_file_stream.close()
+
+
 # can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
 # can.waitToSendCAN()
 # can.CAN_Transmit(TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
@@ -286,10 +308,10 @@ while 1:
 
     if(serRead == 3735928559):
         print("sync found")
-        rawSer = ser.read(2)  # read 2 bytes from serial
+        rawSer = ser.read(2)  # read 2 bytes from serial, aka packet type
         serRead = 0
         serRead = int.from_bytes(rawSer, byteorder='little', signed=False)
-        if(serRead == 1):
+        if(serRead == PACKET_TYPE_ARM_TELEMETRUM):
             print("t_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
@@ -297,7 +319,7 @@ while 1:
                 GPIO.output(t_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(t_arm_pin, GPIO.LOW)
-        elif(serRead == 2):
+        elif(serRead == PACKET_TYPE_ARM_STRATOLOGGER):
             print("s_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_stratalogger_msg,
@@ -306,7 +328,7 @@ while 1:
                 GPIO.output(s_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(s_arm_pin, GPIO.LOW)
-        elif(serRead == 3):
+        elif(serRead == PACKET_TYPE_ARM_CAMERA):
             print("c_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_camera_msg, MED_HIGH_PRIORITY)
@@ -314,7 +336,7 @@ while 1:
                 GPIO.output(c_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(c_arm_pin, GPIO.LOW)
-        elif(serRead == 4):
+        elif(serRead == PACKET_TYPE_DISARM_TELEMETRUM):
             print("t_d")
             if can_arming:
                 can.CAN_Transmit(
@@ -323,7 +345,7 @@ while 1:
                 GPIO.output(t_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(t_disarm_pin, GPIO.LOW)
-        elif(serRead == 5):
+        elif(serRead == PACKET_TYPE_DISARM_STRATOLOGGER):
             print("s_d")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, disarm_stratalogger_msg,
@@ -332,7 +354,7 @@ while 1:
                 GPIO.output(s_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(s_disarm_pin, GPIO.LOW)
-        elif(serRead == 6):
+        elif(serRead == PACKET_TYPE_DISARM_CAMERA):
             print("c_d")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, disarm_camera_msg, MED_HIGH_PRIORITY)
@@ -340,32 +362,14 @@ while 1:
                 GPIO.output(c_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(c_disarm_pin, GPIO.LOW)
-        elif(serRead == 10):
+        elif(serRead == PACKET_TYPE_SET_STARTING_ALTITUDE):
             # Command to set ground level for launch
             gps_ground_level = gps_alt
             baro_ground_level = baro_alt
-        elif(serRead == 11):
+        elif(serRead == PACKET_TYPE_RESET_STARTING_ALTITUDE):
             # Command to set ground level for launch
             gps_ground_level = 0
             baro_ground_level = 0
-        elif(serRead == 12):
-            # Command to start data logging
-            logging_data = True
-
-            num = 0
-            log_file = f'/home/pi/flight_data_{num}.data'
-            while os.path.exists(log_file):
-                num = num + 1
-                log_file = f'/home/pi/flight_data_{num}.data'
-            log_file_stream = open(log_file, 'wb')
-            log_start_time = time.time()
-        elif(serRead == 13):
-            # Command to stop data logging
-            logging_data = False
-            log_file_stream.flush()
-            log_file_stream.close()
-        elif(serRead == 99):
-            os.system("sudo halt")
 
     high_g_x, high_g_y, high_g_z = high_g_accelerometer.acceleration
     bmx_data = bmx.get_all_data()
