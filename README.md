@@ -119,13 +119,12 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [ ] test_parser.h + test_parser.c
      - [x] Update tests -- toby
      - [ ] Verify tests
-  - [ ] everywhere else
-  - [ ] make sure it can compile
+  - [x] make sure it can compile
   - [x] python wrapper
   - [x] creating packets -- deklin
     - [x] adapt code from ground control
   - [ ] read inbound packets -- dersu
-    - [ ] load python wrapper for packet-parser
+    - [x] load python wrapper for packet-parser
     - [x] enqueue incoming bytes
     - [ ] write a simulator script to send inbound packets
 - [ ] modify ground control software to work with new packet types (ground_control   legacy-packets branch)
@@ -133,7 +132,10 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] update packetlib.py with new packet types -- toby
     - [x] update packet_util.py to create new packets (need for testing, could use the C library instead)
     - [ ] update grapher
-    - [ ] update simulator.py to test new format
+      - [ ] determine which data series to graph / which graphs / what order
+      - [ ] figure out why altitude graph is messed up (might be 2 data series mapping to the same graph?)
+    - [x] update simulator.py to test new format
+    - [x] make sure it can run
 - [ ] figure out communication with sensers [before 2023-04-13]
   - [ ] i2c -- ayden
   - [ ] can -- peter
