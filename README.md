@@ -126,12 +126,13 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] adapt code from ground control
   - [ ] read inbound packets -- dersu
     - [ ] load python wrapper for packet-parser
-    - [ ] enqueue incoming bytes
+    - [x] enqueue incoming bytes
     - [ ] write a simulator script to send inbound packets
 - [ ] modify ground control software to work with new packet types (ground_control   legacy-packets branch)
     - [x] update iliad_data_controller.py to store new data types -- toby
     - [x] update packetlib.py with new packet types -- toby
-    - [ ] update packet_util.py to create new packets (need for testing, could use the C library instead)
+    - [x] update packet_util.py to create new packets (need for testing, could use the C library instead)
+    - [ ] update grapher
     - [ ] update simulator.py to test new format
 - [ ] figure out communication with sensers [before 2023-04-13]
   - [ ] i2c -- ayden
