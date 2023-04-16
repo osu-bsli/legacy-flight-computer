@@ -8,6 +8,7 @@ sys.path.append('../../')
 sys.path.append('/')
 # Need in case we run not as pi user
 sys.path.append('/home/pi/.local/lib/python3.9/site-packages/')
+import packet_util
 import os
 import time
 import serial
@@ -71,7 +72,7 @@ c_arm_pin = 27
 c_disarm_pin = 24
 
 # Ground offset initalize
-gps_gorund_level = 0
+gps_ground_level = 0
 baro_ground_level = 0
 baro_alt = 0
 gps_alt = 0
@@ -336,11 +337,11 @@ while 1:
                 GPIO.output(c_disarm_pin, GPIO.LOW)
         elif(serRead == 10):
             # Command to set ground level for launch
-            gps_gorund_level = gps_alt
+            gps_ground_level = gps_alt
             baro_ground_level = baro_alt
         elif(serRead == 11):
             # Command to set ground level for launch
-            gps_gorund_level = 0
+            gps_ground_level = 0
             baro_ground_level = 0
         elif(serRead == 12):
             # Command to start data logging
@@ -384,47 +385,18 @@ while 1:
     # read can messages and things
     doCANmessages()
 
-    ser.write(bytes(CFC_SYNC))
-    ser.write(bytes(CFC_ID))
-    ser.write(bytes(ctypes.c_float(high_g_x)))
-    ser.write(bytes(ctypes.c_float(high_g_y)))
-    ser.write(bytes(ctypes.c_float(high_g_z)))
-    ser.write(bytes(ctypes.c_float(bmx_data[0])))  # bmx x magn
-    ser.write(bytes(ctypes.c_float(bmx_data[1])))  # bmx y magn
-    ser.write(bytes(ctypes.c_float(bmx_data[2])))  # bmx z magn
-    ser.write(bytes(ctypes.c_float(bmx_data[3])))  # bmx x gyro
-    ser.write(bytes(ctypes.c_float(bmx_data[4])))  # bmx y gyro
-    ser.write(bytes(ctypes.c_float(bmx_data[5])))  # bmx z gyro
-    ser.write(bytes(ctypes.c_float(bmx_data[6])))  # bmx x accel
-    ser.write(bytes(ctypes.c_float(bmx_data[7])))  # bmx y accel
-    ser.write(bytes(ctypes.c_float(bmx_data[8])))  # bmx z accel
-    ser.write(bytes(ctypes.c_float(cpu_temp)))
-    ser.write(bytes(ctypes.c_float(real_temp)))
-    # Subtract ground level
-    ser.write(bytes(ctypes.c_float(baro_alt - baro_ground_level)))
-
-    # conversion to ft, subtract ground level
-    ser.write(bytes(ctypes.c_float((gps_alt - gps_gorund_level) * 3.281)))
-    ser.write(bytes(ctypes.c_uint8(gps_satCount)))
-    ser.write(bytes(ctypes.c_float(gps_lat)))
-    ser.write(bytes(ctypes.c_float(gps_lon)))
-    ser.write(bytes(ctypes.c_float(gps_ascent)))
-    ser.write(bytes(ctypes.c_float(gps_groundSpeed)))
-
-    # Write data recived from CAN bus
-    # ser.write(bytes(ctypes.c_float(mainBatteryCurrent)))
-    # ser.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-
-    # Note the order:
-    for arm_board in [telemetrum_board, stratologger_board, camera_board]:
-        ser.write(arm_board.arm_status.to_bytes(1, 'big'))
-        ser.write(bytes(ctypes.c_float(arm_board.current)))
-        ser.write(bytes(ctypes.c_float(arm_board.voltage)))
-
-    ser.write(bytes(ctypes.c_float(v3_rail_voltage)))
-    ser.write(bytes(ctypes.c_float(v5_rail_voltage)))
-    ser.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-    ser.write(bytes(ctypes.c_float(mainBatteryTemperature)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_HIGH_G_ACCELEROMETER, time.time(), (high_g_x, high_g_y, high_g_z)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GYROSCOPE, time.time(), (bmx_data[3], bmx_data[4], bmx_data[5])))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (bmx_data[6], bmx_data[7], bmx_data[8])))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (baro_alt - baro_ground_level)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (((gps_alt - gps_ground_level) * 3.281),gps_satCount, gps_lat, gps_lon, gps_ascent, gps_groundSpeed)))
+    # Need to find data to enter, current tuple is a placeholder
+    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (status, current, voltage)))
+    # Need to find data to enter, current tuple is a placeholder
+    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (status, current, voltage)))
+    # Need to find data to enter, current tuple is a placeholder
+    # ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (status, current, voltage)))
+    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (mainBatteryVoltage, mainBatteryTemperature)))
 
     if logging_data:
         log_file_stream.write(
@@ -455,7 +427,7 @@ while 1:
 
         # conversion to ft, subtract ground level
         log_file_stream.write(bytes(ctypes.c_float(
-            (gps_alt - gps_gorund_level) * 3.281)))
+            (gps_alt - gps_ground_level) * 3.281)))
         log_file_stream.write(bytes(ctypes.c_uint8(gps_satCount)))
         log_file_stream.write(bytes(ctypes.c_float(gps_lat)))
         log_file_stream.write(bytes(ctypes.c_float(gps_lon)))

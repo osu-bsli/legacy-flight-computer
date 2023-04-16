@@ -77,20 +77,20 @@ Outbound data (to ground) is all in 1 packet. Items marked as unused will not be
 8. barometer:
    1. altitude (4)
 9.  gps:
-   1. altitude (4)
-   2. satellite count (1)
-   3. latitude (4)
-   4. longitude (4)
-   5. ascent (4)
-   6. ground speed (4)
+    1. altitude (4)
+    2. satellite count (1)
+    3. latitude (4)
+    4. longitude (4)
+    5. ascent (4)
+    6. ground speed (4)
 10. telemetrum:
-   1. status (1)
-   2. current (4)
-   3. voltage (4)
+    1. status (1)
+    2. current (4)
+    3. voltage (4)
 11. stratologger:
-   1.  status (1)
-   2.  current (4)
-   3.  voltage (4)
+    1.  status (1)
+    2.  current (4)
+    3.  voltage (4)
 12. camera:
     1.  status (1)
     2.  current (4)
@@ -113,19 +113,23 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] packet.c -- dersu
   - [x] parser.h -- ram
   - [x] parser.c -- toby
-  - [ ] test_packet.h + test_packet.c -- ram
-     - [x] Update tests
+  - [ ] test_packet.h + test_packet.c
+     - [x] Update tests -- ram
      - [ ] Verify tests
-  - [ ] test_parser.h + test_parser.c -- toby
-     - [x] Update tests
+  - [ ] test_parser.h + test_parser.c
+     - [x] Update tests -- toby
      - [ ] Verify tests
   - [ ] everywhere else
   - [ ] make sure it can compile
   - [x] python wrapper
   - [ ] creating packets -- deklin
     - [ ] adapt code from ground control
-- [ ] modify ground control software to work with new packet types
-- [ ] figure out communication with sensers [before 2023-04-23]
+- [ ] modify ground control software to work with new packet types (ground_control   legacy-packets branch)
+    - [x] update iliad_data_controller.py to store new data types -- toby
+    - [x] update packetlib.py with new packet types -- toby
+    - [ ] update packet_util.py to create new packets (need for testing, could use the C library instead)
+    - [ ] update simulator.py to test new format
+- [ ] figure out communication with sensers [before 2023-04-13]
   - [ ] i2c -- ayden
   - [ ] can -- peter
   - [ ] reading/writing
