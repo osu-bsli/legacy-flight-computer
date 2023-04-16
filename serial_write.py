@@ -8,7 +8,10 @@ sys.path.append('../../')
 sys.path.append('/')
 # Need in case we run not as pi user
 sys.path.append('/home/pi/.local/lib/python3.9/site-packages/')
+
+# assume import works :eyes:
 import packet_util
+
 import os
 import time
 import serial
@@ -31,6 +34,11 @@ import bitbangio
 import math
 packetlib = __import__("packet-parser").packetlib
 import ctypes
+
+# function to write to serial and log
+def write_to_serial_and_log(ser, log, content):
+    ser.write(content)
+    log.write(content)
 
 
 # i2c = bitbangio.I2C(scl=board.D3, sda=board.D2, frequency=400000)
@@ -266,6 +274,25 @@ disarm_camera_msg = CAN.CAN_message(
     dest_addr=CAMERA, type=DISARM_DEVICE)
 """ End code for CAN things """
 
+
+
+# Start data logging 
+num = 0
+log_file = f'/home/pi/flight_data_{num}.data'
+while os.path.exists(log_file):
+	num = num + 1
+	log_file = f'/home/pi/flight_data_{num}.data'
+log_file_stream = open(log_file, 'wb')
+log_start_time = time.time()
+
+
+# Stop data logging at the end
+# Command to stop data logging
+# logging_data = False
+# log_file_stream.flush()
+# log_file_stream.close()
+
+
 # can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
 # can.waitToSendCAN()
 # can.CAN_Transmit(TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
@@ -291,10 +318,10 @@ while 1:
 
     if(serRead == 3735928559):
         print("sync found")
-        rawSer = ser.read(2)  # read 2 bytes from serial
+        rawSer = ser.read(2)  # read 2 bytes from serial, aka packet type
         serRead = 0
         serRead = int.from_bytes(rawSer, byteorder='little', signed=False)
-        if(serRead == 1):
+        if(serRead == PACKET_TYPE_ARM_TELEMETRUM):
             print("t_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
@@ -302,7 +329,7 @@ while 1:
                 GPIO.output(t_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(t_arm_pin, GPIO.LOW)
-        elif(serRead == 2):
+        elif(serRead == PACKET_TYPE_ARM_STRATOLOGGER):
             print("s_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_stratalogger_msg,
@@ -311,7 +338,7 @@ while 1:
                 GPIO.output(s_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(s_arm_pin, GPIO.LOW)
-        elif(serRead == 3):
+        elif(serRead == PACKET_TYPE_ARM_CAMERA):
             print("c_a")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, arm_camera_msg, MED_HIGH_PRIORITY)
@@ -319,7 +346,7 @@ while 1:
                 GPIO.output(c_arm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(c_arm_pin, GPIO.LOW)
-        elif(serRead == 4):
+        elif(serRead == PACKET_TYPE_DISARM_TELEMETRUM):
             print("t_d")
             if can_arming:
                 can.CAN_Transmit(
@@ -328,7 +355,7 @@ while 1:
                 GPIO.output(t_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(t_disarm_pin, GPIO.LOW)
-        elif(serRead == 5):
+        elif(serRead == PACKET_TYPE_DISARM_STRATOLOGGER):
             print("s_d")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, disarm_stratalogger_msg,
@@ -337,7 +364,7 @@ while 1:
                 GPIO.output(s_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(s_disarm_pin, GPIO.LOW)
-        elif(serRead == 6):
+        elif(serRead == PACKET_TYPE_DISARM_CAMERA):
             print("c_d")
             if can_arming:
                 can.CAN_Transmit(TXB0D0, disarm_camera_msg, MED_HIGH_PRIORITY)
@@ -345,32 +372,14 @@ while 1:
                 GPIO.output(c_disarm_pin, GPIO.HIGH)
                 time.sleep(0.1)
                 GPIO.output(c_disarm_pin, GPIO.LOW)
-        elif(serRead == 10):
+        elif(serRead == PACKET_TYPE_SET_STARTING_ALTITUDE):
             # Command to set ground level for launch
             gps_ground_level = gps_alt
             baro_ground_level = baro_alt
-        elif(serRead == 11):
+        elif(serRead == PACKET_TYPE_RESET_STARTING_ALTITUDE):
             # Command to set ground level for launch
             gps_ground_level = 0
             baro_ground_level = 0
-        elif(serRead == 12):
-            # Command to start data logging
-            logging_data = True
-
-            num = 0
-            log_file = f'/home/pi/flight_data_{num}.data'
-            while os.path.exists(log_file):
-                num = num + 1
-                log_file = f'/home/pi/flight_data_{num}.data'
-            log_file_stream = open(log_file, 'wb')
-            log_start_time = time.time()
-        elif(serRead == 13):
-            # Command to stop data logging
-            logging_data = False
-            log_file_stream.flush()
-            log_file_stream.close()
-        elif(serRead == 99):
-            os.system("sudo halt")
 
     high_g_x, high_g_y, high_g_z = high_g_accelerometer.acceleration
     bmx_data = bmx.get_all_data()
@@ -395,73 +404,41 @@ while 1:
     # read can messages and things
     doCANmessages()
 
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_HIGH_G_ACCELEROMETER, time.time(), (high_g_x, high_g_y, high_g_z)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GYROSCOPE, time.time(), (bmx_data[3], bmx_data[4], bmx_data[5])))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (bmx_data[6], bmx_data[7], bmx_data[8])))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (baro_alt - baro_ground_level)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (((gps_alt - gps_ground_level) * 3.281),gps_satCount, gps_lat, gps_lon, gps_ascent, gps_groundSpeed)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_HIGH_G_ACCELEROMETER, time.time(),(
+        high_g_x,
+        high_g_y, 
+        high_g_z)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_GYROSCOPE, time.time(), (
+        bmx_data[3],
+        bmx_data[4],
+        bmx_data[5])))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (
+        bmx_data[6],
+        bmx_data[7],
+        bmx_data[8])))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (
+        baro_alt - baro_ground_level)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (
+        ((gps_alt - gps_ground_level) * 3.281),
+        gps_satCount,
+        gps_lat,
+        gps_lon,
+        gps_ascent,
+        gps_groundSpeed)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (
         telemetrum_board.arm_status,
         telemetrum_board.current,
         telemetrum_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (
         stratologger_board.arm_status,
         stratologger_board.current,
         stratologger_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
         camera_board.arm_status,
         camera_board.current,
         camera_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (mainBatteryVoltage, mainBatteryTemperature)))
-
-    if logging_data:
-        log_file_stream.write(
-            bytes(ctypes.c_float(time.time() - log_start_time)))
-        # don't need sync or id for data logging
-        # log_file_stream.write(bytes(CFC_SYNC))
-        # log_file_stream.write(bytes(CFC_ID))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_x)))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_y)))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_z)))
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[0])))  # bmx x magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[1])))  # bmx y magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[2])))  # bmx z magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[3])))  # bmx x gyro
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[4])))  # bmx y gyro
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[5])))  # bmx z gyro
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[6])))  # bmx x accel
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[7])))  # bmx y accel
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[8])))  # bmx z accel
-        log_file_stream.write(bytes(ctypes.c_float(cpu_temp)))
-        log_file_stream.write(bytes(ctypes.c_float(real_temp)))
-        # Subtract ground level
-        log_file_stream.write(
-            bytes(ctypes.c_float(baro_alt - baro_ground_level)))
-
-        # conversion to ft, subtract ground level
-        log_file_stream.write(bytes(ctypes.c_float(
-            (gps_alt - gps_ground_level) * 3.281)))
-        log_file_stream.write(bytes(ctypes.c_uint8(gps_satCount)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_lat)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_lon)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_ascent)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_groundSpeed)))
-
-        # Write data recived from CAN bus
-        # ser.write(bytes(ctypes.c_float(mainBatteryCurrent)))
-        # ser.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-
-        # Note the order:
-        for arm_board in [telemetrum_board, stratologger_board, camera_board]:
-            log_file_stream.write(arm_board.arm_status.to_bytes(1, 'big'))
-            log_file_stream.write(bytes(ctypes.c_float(arm_board.current)))
-            log_file_stream.write(bytes(ctypes.c_float(arm_board.voltage)))
-
-        log_file_stream.write(bytes(ctypes.c_float(v3_rail_voltage)))
-        log_file_stream.write(bytes(ctypes.c_float(v5_rail_voltage)))
-        log_file_stream.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-        log_file_stream.write(bytes(ctypes.c_float(mainBatteryTemperature)))
-        log_file_stream.write(bytes('\n', 'ascii'))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (
+        mainBatteryVoltage,
+        mainBatteryTemperature)))
+    
+    log_file_stream.write(bytes('\n', 'ascii'))
