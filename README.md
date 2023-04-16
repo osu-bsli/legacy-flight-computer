@@ -104,7 +104,7 @@ Total packet size is 114 bytes.
 ## TODO
 Please self-assign tasks (put your name next to them) and check them off when done. Feel free to add/remove/modify tasks. This list is incomplete because none of us can predict *everything* that needs to be done. Neither do we know all the details of how to do each task - you will need to do research. If you have questions or need help, *it's always better to ask then to be silent*. If you don't know what to do, just pick something. If you don't have a lot of time, at least try to look at the code and understand some of it, or look through the documentation for some of the libraries, or read up on UART, etc. There's always something to do.
 
-- [ ] change packet types [before 2023-04-12]
+- [ ] change packet types [before 2023-04-19]
   - [x] determing packet types
     - [x] inbound
     - [x] outbound
@@ -125,13 +125,13 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [ ] creating packets -- deklin
     - [ ] adapt code from ground control
 - [ ] modify ground control software to work with new packet types
-- [ ] figure out communication with sensers [before 2023-04-12]
+- [ ] figure out communication with sensers [before 2023-04-23]
   - [ ] i2c -- ayden
   - [ ] can -- peter
   - [ ] reading/writing
   - [ ] initialization
     - [ ] constants/registers
-- [ ] test the existing code + board [on 2023-04-09]
+- [ ] test the existing code + board [on 2023-04-16]
   - [ ] make sure dependencies still work
 - [ ] raspberry pi setup [after the above]
   - [ ] autostart
