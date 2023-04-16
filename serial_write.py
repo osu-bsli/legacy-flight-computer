@@ -296,6 +296,10 @@ log_start_time = time.time()
 # can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
 # can.waitToSendCAN()
 # can.CAN_Transmit(TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
+
+packetlib_buffer = packetlib.get_buffer().contents
+packetlib_packet = packetlib.get_packet().contents
+
 while 1:
     # check if new bytes available before trying to read them
     
@@ -315,71 +319,76 @@ while 1:
     else:
         # if nothing to read, 0 bytes
         serRead = bytes(0)
+    
+    # Update the packet
+    old_size = 0
+    while old_size - packetlib_buffer.size != 0:
+        #self.packet = self.packetPtr.contents
+        old_size = packetlib_buffer.size
+        packetlib.process()
+        if packetlib_buffer.is_ready == 1:
 
-    if(serRead == 3735928559):
-        print("sync found")
-        rawSer = ser.read(2)  # read 2 bytes from serial, aka packet type
-        serRead = 0
-        serRead = int.from_bytes(rawSer, byteorder='little', signed=False)
-        if(serRead == PACKET_TYPE_ARM_TELEMETRUM):
-            print("t_a")
-            if can_arming:
-                can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(t_arm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(t_arm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_ARM_STRATOLOGGER):
-            print("s_a")
-            if can_arming:
-                can.CAN_Transmit(TXB0D0, arm_stratalogger_msg,
-                                 MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(s_arm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(s_arm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_ARM_CAMERA):
-            print("c_a")
-            if can_arming:
-                can.CAN_Transmit(TXB0D0, arm_camera_msg, MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(c_arm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(c_arm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_DISARM_TELEMETRUM):
-            print("t_d")
-            if can_arming:
-                can.CAN_Transmit(
-                    TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(t_disarm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(t_disarm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_DISARM_STRATOLOGGER):
-            print("s_d")
-            if can_arming:
-                can.CAN_Transmit(TXB0D0, disarm_stratalogger_msg,
-                                 MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(s_disarm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(s_disarm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_DISARM_CAMERA):
-            print("c_d")
-            if can_arming:
-                can.CAN_Transmit(TXB0D0, disarm_camera_msg, MED_HIGH_PRIORITY)
-            else:
-                GPIO.output(c_disarm_pin, GPIO.HIGH)
-                time.sleep(0.1)
-                GPIO.output(c_disarm_pin, GPIO.LOW)
-        elif(serRead == PACKET_TYPE_SET_STARTING_ALTITUDE):
-            # Command to set ground level for launch
-            gps_ground_level = gps_alt
-            baro_ground_level = baro_alt
-        elif(serRead == PACKET_TYPE_RESET_STARTING_ALTITUDE):
-            # Command to set ground level for launch
-            gps_ground_level = 0
-            baro_ground_level = 0
+            # extract packet data
+            if packetlib_packet.type == packet_util.PACKET_TYPE_ARM_TELEMETRUM:
+                print("t_a")
+                if can_arming:
+                    can.CAN_Transmit(TXB0D0, arm_telemetrum_msg, MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(t_arm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(t_arm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_ARM_STRATOLOGGER:
+                print("s_a")
+                if can_arming:
+                    can.CAN_Transmit(TXB0D0, arm_stratalogger_msg,
+                                    MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(s_arm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(s_arm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_ARM_CAMERA:
+                print("c_a")
+                if can_arming:
+                    can.CAN_Transmit(TXB0D0, arm_camera_msg, MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(c_arm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(c_arm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_DISARM_TELEMETRUM:
+                print("t_d")
+                if can_arming:
+                    can.CAN_Transmit(
+                        TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(t_disarm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(t_disarm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_DISARM_STRATOLOGGER:
+                print("s_d")
+                if can_arming:
+                    can.CAN_Transmit(TXB0D0, disarm_stratalogger_msg,
+                                    MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(s_disarm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(s_disarm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_DISARM_CAMERA:
+                print("c_d")
+                if can_arming:
+                    can.CAN_Transmit(TXB0D0, disarm_camera_msg, MED_HIGH_PRIORITY)
+                else:
+                    GPIO.output(c_disarm_pin, GPIO.HIGH)
+                    time.sleep(0.1)
+                    GPIO.output(c_disarm_pin, GPIO.LOW)
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_SET_STARTING_ALTITUDE:
+                # Command to set ground level for launch
+                gps_ground_level = gps_alt
+                baro_ground_level = baro_alt
+            elif packetlib_packet.type == packet_util.PACKET_TYPE_RESET_STARTING_ALTITUDE:
+                # Command to set ground level for launch
+                gps_ground_level = 0
+                baro_ground_level = 0
+        packetlib_buffer.is_ready = 0
 
     high_g_x, high_g_y, high_g_z = high_g_accelerometer.acceleration
     bmx_data = bmx.get_all_data()
