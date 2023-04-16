@@ -122,8 +122,8 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [ ] everywhere else
   - [ ] make sure it can compile
   - [x] python wrapper
-  - [ ] creating packets -- deklin
-    - [ ] adapt code from ground control
+  - [x] creating packets -- deklin
+    - [x] adapt code from ground control
 - [ ] modify ground control software to work with new packet types (ground_control   legacy-packets branch)
     - [x] update iliad_data_controller.py to store new data types -- toby
     - [x] update packetlib.py with new packet types -- toby
