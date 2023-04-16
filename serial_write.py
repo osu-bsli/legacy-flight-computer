@@ -29,6 +29,8 @@ import digitalio
 import CAN
 import bitbangio
 import math
+packetlib = __import__("packet-parser").packetlib
+import ctypes
 
 
 # i2c = bitbangio.I2C(scl=board.D3, sda=board.D2, frequency=400000)
@@ -269,6 +271,14 @@ disarm_camera_msg = CAN.CAN_message(
 # can.CAN_Transmit(TXB0D0, disarm_telemetrum_msg, MED_HIGH_PRIORITY)
 while 1:
     # check if new bytes available before trying to read them
+    
+    inbound_bytes: bytearray = bytearray()
+    if ser.in_waiting > 0: # TODO: ask toby about implementation in illiad_data_controller.py
+        inbound_bytes += ser.read_all()
+    inbound_bytes_to_enqueue = min(len(inbound_bytes), packetlib._BUFFER_SIZE - 1)
+    for i in range(inbound_bytes_to_enqueue):
+        packetlib.enqueue(ctypes.c_ubyte(inbound_bytes[i]))
+
     if ser.in_waiting > 0:
         rawSer = ser.read(4)
         serRead = int.from_bytes(rawSer, byteorder='little', signed=False)
