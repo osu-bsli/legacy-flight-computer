@@ -30,6 +30,11 @@ import CAN
 import bitbangio
 import math
 
+# function to write to serial and log
+def write_to_serial_and_log(ser, log, content):
+    ser.write(content)
+    log.write(content)
+
 
 # i2c = bitbangio.I2C(scl=board.D3, sda=board.D2, frequency=400000)
 i2c = busio.I2C(scl=board.D3, sda=board.D2, frequency=400000)
@@ -385,73 +390,41 @@ while 1:
     # read can messages and things
     doCANmessages()
 
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_HIGH_G_ACCELEROMETER, time.time(), (high_g_x, high_g_y, high_g_z)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GYROSCOPE, time.time(), (bmx_data[3], bmx_data[4], bmx_data[5])))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (bmx_data[6], bmx_data[7], bmx_data[8])))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (baro_alt - baro_ground_level)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (((gps_alt - gps_ground_level) * 3.281),gps_satCount, gps_lat, gps_lon, gps_ascent, gps_groundSpeed)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_HIGH_G_ACCELEROMETER, time.time(),(
+        high_g_x,
+        high_g_y, 
+        high_g_z)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_GYROSCOPE, time.time(), (
+        bmx_data[3],
+        bmx_data[4],
+        bmx_data[5])))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_ACCELEROMETER, time.time(), (
+        bmx_data[6],
+        bmx_data[7],
+        bmx_data[8])))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_BAROMETER, time.time(), (
+        baro_alt - baro_ground_level)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_GPS, time.time(), (
+        ((gps_alt - gps_ground_level) * 3.281),
+        gps_satCount,
+        gps_lat,
+        gps_lon,
+        gps_ascent,
+        gps_groundSpeed)))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_TELEMETRUM, time.time(), (
         telemetrum_board.arm_status,
         telemetrum_board.current,
         telemetrum_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_STRATOLOGGER, time.time(), (
         stratologger_board.arm_status,
         stratologger_board.current,
         stratologger_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
         camera_board.arm_status,
         camera_board.current,
         camera_board.voltage)))
-    ser.write(packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (mainBatteryVoltage, mainBatteryTemperature)))
-
-    if logging_data:
-        log_file_stream.write(
-            bytes(ctypes.c_float(time.time() - log_start_time)))
-        # don't need sync or id for data logging
-        # log_file_stream.write(bytes(CFC_SYNC))
-        # log_file_stream.write(bytes(CFC_ID))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_x)))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_y)))
-        log_file_stream.write(bytes(ctypes.c_float(high_g_z)))
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[0])))  # bmx x magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[1])))  # bmx y magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[2])))  # bmx z magn
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[3])))  # bmx x gyro
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[4])))  # bmx y gyro
-        log_file_stream.write(bytes(ctypes.c_float(bmx_data[5])))  # bmx z gyro
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[6])))  # bmx x accel
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[7])))  # bmx y accel
-        log_file_stream.write(
-            bytes(ctypes.c_float(bmx_data[8])))  # bmx z accel
-        log_file_stream.write(bytes(ctypes.c_float(cpu_temp)))
-        log_file_stream.write(bytes(ctypes.c_float(real_temp)))
-        # Subtract ground level
-        log_file_stream.write(
-            bytes(ctypes.c_float(baro_alt - baro_ground_level)))
-
-        # conversion to ft, subtract ground level
-        log_file_stream.write(bytes(ctypes.c_float(
-            (gps_alt - gps_ground_level) * 3.281)))
-        log_file_stream.write(bytes(ctypes.c_uint8(gps_satCount)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_lat)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_lon)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_ascent)))
-        log_file_stream.write(bytes(ctypes.c_float(gps_groundSpeed)))
-
-        # Write data recived from CAN bus
-        # ser.write(bytes(ctypes.c_float(mainBatteryCurrent)))
-        # ser.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-
-        # Note the order:
-        for arm_board in [telemetrum_board, stratologger_board, camera_board]:
-            log_file_stream.write(arm_board.arm_status.to_bytes(1, 'big'))
-            log_file_stream.write(bytes(ctypes.c_float(arm_board.current)))
-            log_file_stream.write(bytes(ctypes.c_float(arm_board.voltage)))
-
-        log_file_stream.write(bytes(ctypes.c_float(v3_rail_voltage)))
-        log_file_stream.write(bytes(ctypes.c_float(v5_rail_voltage)))
-        log_file_stream.write(bytes(ctypes.c_float(mainBatteryVoltage)))
-        log_file_stream.write(bytes(ctypes.c_float(mainBatteryTemperature)))
-        log_file_stream.write(bytes('\n', 'ascii'))
+    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (
+        mainBatteryVoltage,
+        mainBatteryTemperature)))
+    
+    log_file_stream.write(bytes('\n', 'ascii'))
