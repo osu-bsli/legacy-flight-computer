@@ -124,6 +124,10 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] python wrapper
   - [x] creating packets -- deklin
     - [x] adapt code from ground control
+  - [ ] read inbound packets -- dersu
+    - [ ] load python wrapper for packet-parser
+    - [ ] enqueue incoming bytes
+    - [ ] write a simulator script to send inbound packets
 - [ ] modify ground control software to work with new packet types (ground_control   legacy-packets branch)
     - [x] update iliad_data_controller.py to store new data types -- toby
     - [x] update packetlib.py with new packet types -- toby
@@ -137,9 +141,15 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [ ] constants/registers
 - [ ] test the existing code + board [on 2023-04-16]
   - [ ] make sure dependencies still work
+  - [ ] determine overall system configuration
 - [ ] raspberry pi setup [after the above]
   - [ ] autostart
   - [ ] restart on crash?
   - [ ] where to save data
   - [ ] library/software configuration
   - [ ] turn off unused things, debloat, (DietPi?)
+- [ ] documentation
+  - [ ] packet structure
+  - [ ] high level control flow / block diagram
+  - [ ] raspberry pi configuration
+  - [ ] format as a step-by-step guide
