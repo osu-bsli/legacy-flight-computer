@@ -113,9 +113,9 @@ Please self-assign tasks (put your name next to them) and check them off when do
   - [x] packet.c -- dersu
   - [x] parser.h -- ram
   - [x] parser.c -- toby
-  - [ ] test_packet.h + test_packet.c
+  - [ ] test_packet.h + test_packet.c -- ram
      - [x] Update tests -- ram
-     - [ ] Verify tests
+     - [ ] Verify tests -- ram
   - [ ] test_parser.h + test_parser.c
      - [x] Update tests -- toby
      - [ ] Verify tests
