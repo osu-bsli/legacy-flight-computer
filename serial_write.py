@@ -140,7 +140,6 @@ class ArmingBoard:
 # Define struct for each of the arming boards
 telemetrum_board = ArmingBoard()
 stratologger_board = ArmingBoard()
-camera_board = ArmingBoard()
 
 
 def doCANmessages():
@@ -156,7 +155,6 @@ def handleCANmsg(msg):
     global mainBatteryReadTime
     global telemetrum_board
     global stratologger_board
-    global camera_board
     global v3_rail_voltage
     global v5_rail_voltage
     global mainBatteryTemperature
@@ -174,8 +172,6 @@ def handleCANmsg(msg):
         arm_board = stratologger_board
     elif msg.from_addr == TELEMETRUM:
         arm_board = telemetrum_board
-    elif msg.from_addr == CAMERA:
-        arm_board = camera_board
 
     if msg.type == PWR_BRD_BAT_DATA:
         # save data to thing
@@ -231,8 +227,6 @@ def handleCANmsg(msg):
             voltage = voltage * (v3_rail_voltage / 4095.0) / (100.0 / 127.4)
         elif(msg.from_addr == STRATOLOGGER):
             voltage = voltage * (v3_rail_voltage / 4095.0) / (100.0 / 262.0)
-        elif(msg.from_addr == CAMERA):
-            voltage = voltage * (v3_rail_voltage / 4095.0) / (100.0 / 262.0)
         else:
             voltage = 0
 
@@ -247,8 +241,6 @@ def handleCANmsg(msg):
             print("Stratologger data:")
         elif msg.from_addr == TELEMETRUM:
             print("Telemetrum data:")
-        elif msg.from_addr == CAMERA:
-            print("Camera data:")
         print(f'==Current (mA): {arm_board.current}')
         print(f'==Voltage (V): {arm_board.voltage}')
         print(f'==Armed? {arm_board.arm_status}')
@@ -264,14 +256,10 @@ arm_telemetrum_msg = CAN.CAN_message(
     dest_addr=TELEMETRUM, type=ARM_DEVICE)
 arm_stratalogger_msg = CAN.CAN_message(
     dest_addr=STRATOLOGGER, type=ARM_DEVICE)
-arm_camera_msg = CAN.CAN_message(
-    dest_addr=CAMERA, type=ARM_DEVICE)
 disarm_telemetrum_msg = CAN.CAN_message(
     dest_addr=TELEMETRUM, type=DISARM_DEVICE)
 disarm_stratalogger_msg = CAN.CAN_message(
     dest_addr=STRATOLOGGER, type=DISARM_DEVICE)
-disarm_camera_msg = CAN.CAN_message(
-    dest_addr=CAMERA, type=DISARM_DEVICE)
 """ End code for CAN things """
 
 
@@ -346,14 +334,6 @@ while 1:
                     GPIO.output(s_arm_pin, GPIO.HIGH)
                     time.sleep(0.1)
                     GPIO.output(s_arm_pin, GPIO.LOW)
-            elif packetlib_packet.type == packet_util.PACKET_TYPE_ARM_CAMERA:
-                print("c_a")
-                if can_arming:
-                    can.CAN_Transmit(TXB0D0, arm_camera_msg, MED_HIGH_PRIORITY)
-                else:
-                    GPIO.output(c_arm_pin, GPIO.HIGH)
-                    time.sleep(0.1)
-                    GPIO.output(c_arm_pin, GPIO.LOW)
             elif packetlib_packet.type == packet_util.PACKET_TYPE_DISARM_TELEMETRUM:
                 print("t_d")
                 if can_arming:
@@ -372,14 +352,6 @@ while 1:
                     GPIO.output(s_disarm_pin, GPIO.HIGH)
                     time.sleep(0.1)
                     GPIO.output(s_disarm_pin, GPIO.LOW)
-            elif packetlib_packet.type == packet_util.PACKET_TYPE_DISARM_CAMERA:
-                print("c_d")
-                if can_arming:
-                    can.CAN_Transmit(TXB0D0, disarm_camera_msg, MED_HIGH_PRIORITY)
-                else:
-                    GPIO.output(c_disarm_pin, GPIO.HIGH)
-                    time.sleep(0.1)
-                    GPIO.output(c_disarm_pin, GPIO.LOW)
             elif packetlib_packet.type == packet_util.PACKET_TYPE_SET_STARTING_ALTITUDE:
                 # Command to set ground level for launch
                 gps_ground_level = gps_alt
@@ -442,10 +414,6 @@ while 1:
         stratologger_board.arm_status,
         stratologger_board.current,
         stratologger_board.voltage)))
-    write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_CAMERA, time.time(), (
-        camera_board.arm_status,
-        camera_board.current,
-        camera_board.voltage)))
     write_to_serial_and_log(ser, log_file_stream, packet_util.create_packet(packet_util.PACKET_TYPE_BATTERY, time.time(), (
         mainBatteryVoltage,
         mainBatteryTemperature)))
