@@ -9,6 +9,7 @@ STRATOLOGGER = 0x01
 TELEMETRUM = 0x02
 CUSTOM_FC = 0x03
 BATTERY_BOARD = 0x04
+CAMERA = 0x05
 
 # Define message types (can use 5 bits)
 WAKEUP_DEVICE = 0x00
