@@ -131,11 +131,14 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [x] update iliad_data_controller.py to store new data types -- toby
     - [x] update packetlib.py with new packet types -- toby
     - [x] update packet_util.py to create new packets (need for testing, could use the C library instead)
-    - [ ] update grapher
-      - [ ] determine which data series to graph / which graphs / what order
-      - [ ] figure out why altitude graph is messed up (might be 2 data series mapping to the same graph?)
+    - [x] update grapher
+      - [x] determine which data series to graph / which graphs / what order
+      - [x] figure out why altitude graph is messed up (might be 2 data series mapping to the same graph?)
     - [x] update simulator.py to test new format
     - [x] make sure it can run
+    - [ ] update arm/disarm controls
+      - [ ] for telemetrum/stratologger/camera
+      - [ ] add ability to send `PACKET_TYPE_SET_STARTING_ALTITUDE` and `PACKET_TYPE_RESET_STARTING_ALTITUDE` packets.
 - [ ] figure out communication with sensers [before 2023-04-13]
   - [ ] i2c -- ayden
   - [ ] can -- peter
