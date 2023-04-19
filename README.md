@@ -139,23 +139,66 @@ Please self-assign tasks (put your name next to them) and check them off when do
     - [ ] update arm/disarm controls
       - [ ] for telemetrum/stratologger/camera
       - [ ] add ability to send `PACKET_TYPE_SET_STARTING_ALTITUDE` and `PACKET_TYPE_RESET_STARTING_ALTITUDE` packets.
-- [ ] figure out communication with sensers [before 2023-04-13]
-  - [ ] i2c -- ayden
-  - [ ] can -- peter
-  - [ ] reading/writing
-  - [ ] initialization
-    - [ ] constants/registers
-- [ ] test the existing code + board [on 2023-04-16]
+- [ ] communication with sensers [before 2023-04-23]
+  - [ ] how to use provided libraries
+    - [ ] for i2c -- ayden
+    - [ ] can -- peter
+    - [ ] reading/writing
+    - [ ] test scripts, 
+  - [ ] sensor initialization
+    - [ ] any specific constants that need to be sent?
+    - [ ] any weird register stuff?
+    - [ ] any gotchas?
+- [ ] test the existing code + board [on 2023-04-19]
   - [ ] make sure dependencies still work
   - [ ] determine overall system configuration
+    - [ ] where is the program?
+    - [ ] where do the logs go?
+    - [ ] how is it started?
+    - [ ] is it automatically restarted?
+    - [ ] what programs are installed
+      - [ ] check package manager
+    - [ ] what programs are disabled
+    - [ ] find modified config files
+      - [ ] in home directory?
+      - [ ] in root directory?
 - [ ] raspberry pi setup [after the above]
+  - [ ] determine what our config process should look like
+    - [ ] what packages to install
+      - [ ] can we update them?
+    - [ ] what configs to modify and how
+    - [ ] where to put the flight computer code
+    - [ ] write this all down *in detail* so that it can be replicated with minimal effort
   - [ ] autostart
   - [ ] restart on crash?
   - [ ] where to save data
   - [ ] library/software configuration
   - [ ] turn off unused things, debloat, (DietPi?)
-- [ ] documentation
-  - [ ] packet structure
-  - [ ] high level control flow / block diagram
-  - [ ] raspberry pi configuration
-  - [ ] format as a step-by-step guide
+- [ ] documentation [after the above]
+  - [ ] high level concepts / features / what does this thing even do
+  - [ ] high level control flow / block diagram / architecture
+  - [ ] installation/setup/usage
+  - [ ] how it fits in to our overall long-term goals
+  - [ ] any gotchas or considerations
+  - [ ] any historical context (ie. why does this exist in the first place, what were we dealing with at the time)
+  - [ ] possible links to board schematics? they don't necessarily have to be public
+  - [ ] packetlib
+    - [ ] inbound packets (ground to rocket)
+    - [ ] outbound packets (rocket to ground)
+  - [ ] ground-control
+  - [ ] legacy-flight-computer
+    - [ ] detailed setup guide for raspberry pi
+- [ ] do a github release for each repo [once code has stabilized, likely early summer, after documentation]
+  - [ ] merging everything to main should be fine, no need for a legacy branch
+  - [ ] clean things up
+    - [ ] triage unused files
+      - [ ] some simulator scripts could be merged into packetlib itself
+      - [ ] misc. test scripts (not unit tests) can be deleted if not used
+    - [ ] remove unused imports
+    - [ ] any final refactoring that isn't too invasive
+    - [ ] code commenting (docstrings for every function, class, and file)
+  - [ ] version numbers (using [Semantic Versioning](https://semver.org/))
+  - [ ] update dependency list
+    - [ ] estimate version limits for each packages (ie. `crc` had api changes, and our code won't work with older versions)
+    - [ ] freeze dependencies in pip
+    - [ ] generate/update `requirements.txt` (for pip users) and `environment.yml` (for conda users)
