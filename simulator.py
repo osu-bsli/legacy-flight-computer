@@ -1,7 +1,7 @@
 # Simulates the sending of arm/disarm packets
 
 import serial
-import packet_util as pk
+import packetlib.packet as pk
 import time
 
 if __name__ == '__main__':
